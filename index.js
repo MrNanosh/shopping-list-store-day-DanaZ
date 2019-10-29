@@ -1,3 +1,4 @@
+'use strict';
 const store = {
   items: [
     { id: cuid(), name: 'apples', checked: false },
@@ -9,10 +10,10 @@ const store = {
 };
 
 const generateItemElement = function (item) {
-  let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
+  let itemTitle = `<button class='shopping-item shopping-item__checked'>${item.name}</button>`;
   if (!item.checked) {
     itemTitle = `
-     <span class='shopping-item'>${item.name}</span>
+     <button class='shopping-item'>${item.name}</button>
     `;
   }
 
@@ -160,7 +161,63 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditShoppingListItem();
 };
+
+function handleEditShoppingListItem() {
+  $('.js-shopping-list').on('click', '.js-item-element',event =>{
+    event.stopPropagation();
+    let id = getItemIdFromElement(event.currentTarget);
+    // let id = getItemIdFromElement($(event.currentTarget).find('.shopping-item'));//get id
+  
+    //get item in the store
+    let storeItem = store.items.find(item=> item.id===id);    
+    console.log(storeItem.name);
+    //make current element a text box for editing
+    $(event.currentTarget).html(`
+        <input type='text' class='shopping-item' name='new-item' id= 'new-item' value='${storeItem.name}' required>
+      ${generateItemInPlace()}
+    `);
+    $('#new-item').focus();
+    $('.shopping-item').on('click',event=>{
+      console.log('hello');
+
+    }).delay(5000);
+  });
+    //click outside the text box to submit
+
+    
+    
+
+    //change and render elements
+    // $(event.currentTarget).html(generateItemInPlace());
+    // render();
+
+    // storeItem.name = ;//assigned to entry
+
+    //change textbox back into button
+  
+  
+  
+  
+  //render individual items
+  
+  
+  
+}
+
+function generateItemInPlace(){
+  return `
+    <div class='shopping-item-controls'>
+      <button class='shopping-item-toggle js-item-toggle'>
+        <span class='button-label'>check</span>
+      </button>
+      <button class='shopping-item-delete js-item-delete'>
+        <span class='button-label'>delete</span>
+      </button>
+    </div>
+  `;
+}
 
 // when the page loads, call `handleShoppingList`
 $(handleShoppingList);
