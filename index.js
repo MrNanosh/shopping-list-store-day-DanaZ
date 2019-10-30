@@ -165,7 +165,7 @@ const handleShoppingList = function () {
 };
 
 function handleEditShoppingListItem() {
-  $('.js-shopping-list').on('click', '.js-item-element',event =>{
+  $('.shopping-item').on('click', event =>{
     event.stopPropagation();
     let id = getItemIdFromElement(event.currentTarget);
     // let id = getItemIdFromElement($(event.currentTarget).find('.shopping-item'));//get id
@@ -174,28 +174,19 @@ function handleEditShoppingListItem() {
     let storeItem = store.items.find(item=> item.id===id);    
     console.log(storeItem.name);
     //make current element a text box for editing
-    $(event.currentTarget).html(`
+    $(event.currentTarget).parent().html(`
         <input type='text' class='shopping-item' name='new-item' id= 'new-item' value='${storeItem.name}' required>
-      ${generateItemInPlace()}
-    `);
+    `+generateItemInPlace());
     $('#new-item').focus();
-    $('.shopping-item').on('click',event=>{
-      console.log('hello');
-
-    }).delay(5000);
-  });
     //click outside the text box to submit
-
+    clickOutside(x=>getTextBoxContents());
+    
+  });
+  
     
     
 
-    //change and render elements
-    // $(event.currentTarget).html(generateItemInPlace());
-    // render();
 
-    // storeItem.name = ;//assigned to entry
-
-    //change textbox back into button
   
   
   
@@ -205,7 +196,27 @@ function handleEditShoppingListItem() {
   
   
 }
+function renameItem(newName,id) {
+  store.items[store.items.findIndex(item=>item.id===id)].name =newName;
+  console.log(store.items[0]);
+}
+function getTextBoxContents() {
 
+  let newGroceryItem = $('#new-item');
+  let itemNewName = newGroceryItem.val();
+  renameItem(itemNewName,newGroceryItem.parent().data('item-id'));
+  $('#new-item').parent().html(`
+  <button class='shopping-item'>${itemNewName}</button>`+generateItemInPlace());//  <p>hey</p>  console.log(newGroceryItem);
+  // console.log($('#new-item').parent().data('item-id'));
+  handleShoppingList ();
+}
+function clickOutside(callback){
+  $('body, ul, li, h1, div').on('click',event=>{
+    callback();
+    console.log('hello');
+  }).children().on('click',event=> {
+    return false;});
+}
 function generateItemInPlace(){
   return `
     <div class='shopping-item-controls'>
